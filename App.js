@@ -8,6 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 import TaskItem from './components/TaskItem';
+import { Context } from './Context/Context';
 
 export default function App() {
   const [task, setTask] = useState('');
@@ -29,46 +30,42 @@ export default function App() {
     }
   };
 
-  // const removeTask = (e) => {
-  //   const { id } = e.tagert;
-  //   const newList = list.filter((item) => item.id !== id);
-  //   setList(newList);
-  // }
-
   return (
-    <View style={styles.appContainer}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>REACT NATIVE TO-DO 📑</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputText}
-          value={task}
-          placeholder="What's next ?"
-          onChangeText={handleChange}
-        />
-        <Button
-          title='Add Task'
-          onPress={addTask}
-        />
-      </View>
-      <View style={styles.listContainer}>
-        <FlatList
-          data={list}
-          renderItem={(itemData) => {
-            return (
-              <TaskItem
-                text={itemData.item.text}
-                id={itemData.item.id}
-              />
-            )
-          }}
-          keyExtractor={(item) => item.id}
-        >
+    <Context.Provider value={{ taskList: [list, setList] }}>
+      <View style={styles.appContainer}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>REACT NATIVE TO-DO 📑</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputText}
+            value={task}
+            placeholder="What's next ?"
+            onChangeText={handleChange}
+          />
+          <Button
+            title='Add Task'
+            onPress={addTask}
+          />
+        </View>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={list}
+            renderItem={(itemData) => {
+              return (
+                <TaskItem
+                  text={itemData.item.text}
+                  id={itemData.item.id}
+                />
+              )
+            }}
+            keyExtractor={(item) => item.id}
+          >
 
-        </FlatList>
+          </FlatList>
+        </View>
       </View>
-    </View>
+    </Context.Provider>
   );
 }
 
