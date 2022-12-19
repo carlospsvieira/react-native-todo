@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { styles } from './styles'
 import {
-  Button,
-  StyleSheet,
+  Pressable,
   Text,
   TextInput,
   View,
   FlatList,
+  Modal,
 } from 'react-native';
 import TaskItem from './components/TaskItem';
 import { Context } from './Context/Context';
@@ -13,6 +14,7 @@ import { Context } from './Context/Context';
 export default function App() {
   const [task, setTask] = useState('');
   const [list, setList] = useState([])
+  const [visible, setVisible] = useState(false);
 
   const handleChange = (enteredText) => {
     setTask(enteredText);
@@ -32,7 +34,24 @@ export default function App() {
 
   return (
     <Context.Provider value={{ taskList: [list, setList] }}>
+      {!visible && <Modal>
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.welcomeText}>Welcome!</Text>
+          <Pressable
+            style={({ pressed }) => pressed ? styles.wasPressed : styles.modalBtn}
+            onPress={() => setVisible(true)}
+          >
+            <Text style={styles.modalText}>START</Text>
+          </Pressable>
+        </View>
+      </Modal>}
       <View style={styles.appContainer}>
+        <Pressable
+          style={styles.closeContainer}
+          onPress={() => setVisible(false)}
+        >
+          <Text style={styles.closeIcon}>🔏</Text>
+        </Pressable>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>REACT NATIVE TO-DO 📑</Text>
         </View>
@@ -42,11 +61,11 @@ export default function App() {
             value={task}
             placeholder="What's next ?"
             onChangeText={handleChange}
+            onSubmitEditing={addTask}
           />
-          <Button
-            title='Add Task'
-            onPress={addTask}
-          />
+          <Pressable style={styles.addBtn} onPress={addTask}>
+            <Text style={styles.btnText}>ADD TASK</Text>
+          </Pressable>
         </View>
         <View style={styles.listContainer}>
           <FlatList
@@ -68,43 +87,3 @@ export default function App() {
     </Context.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  appContainer: {
-    padding: 25
-  },
-
-  headerContainer: {
-    padding: 10,
-    marginTop: '15%',
-  },
-
-  headerText: {
-    fontSize: 22,
-    fontWeight: '600',
-    textAlign: 'center'
-  },
-
-  inputContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-    paddingVertical: 25,
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-  },
-
-  inputText: {
-    borderWidth: 1,
-    borderColor: 'grey',
-    width: '75%',
-    marginRight: 5,
-    textAlign: 'center',
-    fontSize: 16,
-  },
-
-  listContainer: {
-    paddingHorizontal: 20,
-    marginTop: 25,
-    height: '80%'
-  },
-});
